@@ -24,7 +24,7 @@ class _NewPostState extends State<NewPost> {
       ..descrip = descrip
       ..userid = data['id']
       ..name = data['name']
-      ..postid = posts.id
+      ..postid = posts.id.toString()
       ..time = Timestamp.now().toDate().toString());
     posts.set(newPost.toJson());
     controll.clear();
