@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_proj/posts.dart';
 import 'package:flutter/material.dart';
 
 class NewPost extends StatefulWidget {
@@ -17,15 +18,15 @@ class _NewPostState extends State<NewPost> {
     final uidd = await FirebaseAuth.instance.currentUser!.uid ?? '';
     final data =
         await FirebaseFirestore.instance.collection('users').doc(uidd).get();
-    final data2 = await FirebaseFirestore.instance.collection('posts').doc();
-    await FirebaseFirestore.instance.collection('posts').doc().set({
-      "descrip": descrip,
-      "userid": data['id'],
-      'name': data['name'],
-      'postid': data2.id,
-      'time': Timestamp.now()
-    });
 
+    final posts = await FirebaseFirestore.instance.collection('posts').doc();
+    Posts newPost = Posts((b) => b
+      ..descrip = descrip
+      ..userid = data['id']
+      ..name = data['name']
+      ..postid = posts.id
+      ..time = Timestamp.now().toDate().toString());
+    posts.set(newPost.toJson());
     controll.clear();
   }
 
@@ -92,10 +93,3 @@ class _NewPostState extends State<NewPost> {
     );
   }
 }
-/*echo "# training_catchup" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/soniyanw/training_catchup.git
-git push -u origin main*/

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_proj/comment.dart';
 import 'package:flutter/material.dart';
 
 class Comments extends StatefulWidget {
@@ -18,13 +19,15 @@ class _CommentsState extends State<Comments> {
     final uidd = await FirebaseAuth.instance.currentUser!.uid;
     final data =
         await FirebaseFirestore.instance.collection('users').doc(uidd).get();
-    await FirebaseFirestore.instance.collection('comments').doc().set({
-      "comment": comment,
-      "postid": postid,
-      "userid": data['id'],
-      'name': data['name'],
-      'time': Timestamp.now()
-    });
+    final comms = await FirebaseFirestore.instance.collection('comments').doc();
+    Comment newComment = Comment((b) => b
+      ..comment = comment
+      ..postid = postid
+      ..userid = data['id']
+      ..name = data['name']
+      ..time = Timestamp.now().toDate().toString()
+      ..id = comms.id);
+    comms.set(newComment.toJson());
     controll.clear();
   }
 
@@ -92,47 +95,37 @@ class Commentlist extends StatefulWidget {
 }
 
 class _CommentlistState extends State<Commentlist> {
+  final currentuser = FirebaseAuth.instance.currentUser?.uid ?? '';
+  CollectionReference<Map<String, dynamic>> collection =
+      FirebaseFirestore.instance.collection('comments');
   @override
   Widget build(BuildContext context) {
-    final currentuser = FirebaseAuth.instance.currentUser?.uid ?? '';
-    Stream<QuerySnapshot<Map<String, dynamic>>> hello = FirebaseFirestore
-        .instance
-        .collection('comments')
-        .orderBy('time', descending: true)
-        .snapshots();
-    if (hello != null) {
-      return StreamBuilder(
-          stream: hello,
-          builder: (context, AsyncSnapshot<QuerySnapshot> snapShot) {
-            if (snapShot.hasData) {
-              List<QueryDocumentSnapshot<Object?>> commentdata =
-                  snapShot.data!.docs;
-              return ListView.builder(
-                  itemCount: commentdata.length,
-                  itemBuilder: (context, index) {
-                    if (commentdata[index]['postid'] == widget.postid) {
-                      return Commentbox(
-                          commentdata[index]['comment'],
-                          commentdata[index]['name'],
-                          commentdata[index]['userid'] == currentuser,
-                          (commentdata[index]['time']).toDate().toString(),
-                          key: ValueKey(commentdata[index].id));
-                    } else {
-                      return Container(
-                        height: 0,
-                        width: 0,
-                      );
-                    }
-                  });
-            } else {
-              return Container(
-                color: Colors.teal[100],
-              );
-            }
-          });
-    } else {
-      return Container();
-    }
+    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      future: collection.doc(currentuser).get(),
+      builder: (_, snapshot) {
+        if (snapshot.hasError) return Text('Error = ${snapshot.error}');
+
+        if (snapshot.hasData) {
+          final Map<String, dynamic>? data = snapshot.data!.data();
+          final comm = Comment.fromJson(data ?? {});
+          if (comm.postid == widget.postid) {
+            return Commentbox(
+                comm.comment, comm.name, comm.userid == currentuser, comm.time,
+                key: ValueKey(comm.id));
+          } else {
+            return Container(
+              height: 0,
+              width: 0,
+            );
+          }
+        }
+
+        return Container(
+          color: Colors.teal[100],
+        );
+        ;
+      },
+    );
   }
 }
 
