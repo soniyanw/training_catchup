@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_proj/post_box.dart';
+import 'package:firebase_proj/posts.dart';
 import 'package:flutter/material.dart';
 
 class Post extends StatefulWidget {
@@ -12,26 +14,37 @@ class Post extends StatefulWidget {
 class _PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
-    final currentuser = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final currentuser = FirebaseAuth.instance.currentUser?.uid;
     CollectionReference<Map<String, dynamic>> collection =
         FirebaseFirestore.instance.collection('posts');
-    return Container();
-    /*return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      future: collection.doc(currentuser).get(),
-      builder: (_, snapshot) {
-        if (snapshot.hasError) return Text('Error = ${snapshot.error}');
+    return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        future: collection.get(),
+        builder: (_, snapshot) {
+          if (snapshot.hasError) return Text('Error = ${snapshot.error}');
 
-        if (snapshot.hasData) {
-          final Map<String, dynamic>? data = snapshot.data!.data();
-          final post = Posts.fromJson(data ?? {});
-          return PostBox(post.descrip, post.name, post.postid,
-              post.userid == currentuser, post.time,
-              key: ValueKey(post.postid));
-        }
+          if (snapshot.hasData) {
+            final List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
+                snapshot.data!.docs;
+            final postdata = [];
 
-        return Container(color: Colors.teal[100]);
-      },
-    )*/
-    ;
+            data.forEach((element) {
+              postdata.add(Posts.fromJson(element.data()));
+            });
+            return ListView.builder(
+              itemCount: postdata.length,
+              itemBuilder: (context, index) {
+                return PostBox(
+                    postdata[index].descrip,
+                    postdata[index].name,
+                    postdata[index].postid,
+                    postdata[index].userid == currentuser,
+                    (postdata[index].time),
+                    key: ValueKey(postdata[index].postid));
+              },
+            );
+          } else {
+            return Container(color: Colors.teal[100]);
+          }
+        });
   }
 }

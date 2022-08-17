@@ -26,7 +26,7 @@ class _CommentsState extends State<Comments> {
       ..userid = data['id']
       ..name = data['name']
       ..time = Timestamp.now().toDate().toString()
-      ..id = comms.id);
+      ..id = comms.id.toString());
     comms.set(newComment.toJson());
     controll.clear();
   }
@@ -100,32 +100,43 @@ class _CommentlistState extends State<Commentlist> {
       FirebaseFirestore.instance.collection('comments');
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      future: collection.doc(currentuser).get(),
-      builder: (_, snapshot) {
-        if (snapshot.hasError) return Text('Error = ${snapshot.error}');
+    return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        future: collection.get(),
+        builder: (_, snapshot) {
+          if (snapshot.hasError) return Text('Error = ${snapshot.error}');
 
-        if (snapshot.hasData) {
-          final Map<String, dynamic>? data = snapshot.data!.data();
-          final comm = Comment.fromJson(data ?? {});
-          if (comm.postid == widget.postid) {
-            return Commentbox(
-                comm.comment, comm.name, comm.userid == currentuser, comm.time,
-                key: ValueKey(comm.id));
+          if (snapshot.hasData) {
+            final List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
+                snapshot.data!.docs;
+            final commdata = [];
+
+            data.forEach((element) {
+              commdata.add(Comment.fromJson(element.data()));
+            });
+            return ListView.builder(
+              itemCount: commdata.length,
+              itemBuilder: (context, index) {
+                if (commdata[index].postid == widget.postid) {
+                  return Commentbox(
+                      commdata[index].comment,
+                      commdata[index].name,
+                      commdata[index].userid == currentuser,
+                      commdata[index].time,
+                      key: ValueKey(commdata[index].id));
+                } else {
+                  return Container(
+                    height: 0,
+                    width: 0,
+                  );
+                }
+              },
+            );
           } else {
             return Container(
-              height: 0,
-              width: 0,
+              color: Colors.teal[100],
             );
           }
-        }
-
-        return Container(
-          color: Colors.teal[100],
-        );
-        ;
-      },
-    );
+        });
   }
 }
 
