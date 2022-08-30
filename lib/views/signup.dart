@@ -65,9 +65,12 @@ class _SignupState extends State<Signup> {
                     MaterialButton(
                       onPressed: () {
                         imp.signup(
-                            context.watch()<Values>().signUpName,
-                            context.watch()<Values>().signUpMail,
-                            context.watch()<Values>().signUpPass);
+                            Provider.of<Values>(context, listen: false)
+                                .signUpName,
+                            Provider.of<Values>(context, listen: false)
+                                .signUpMail,
+                            Provider.of<Values>(context, listen: false)
+                                .signUpPass);
                         setState(() {});
                         Navigator.push(
                           context,

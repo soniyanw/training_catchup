@@ -12,7 +12,7 @@ class Comments extends StatefulWidget {
 }
 
 class _CommentsState extends State<Comments> {
-  var controll = TextEditingController();
+  TextEditingController controll = TextEditingController();
   Implementation imp = Implementation();
 
   @override
@@ -47,8 +47,11 @@ class _CommentsState extends State<Comments> {
                         : () {
                             FocusScope.of(context).unfocus();
                             imp.commentsomething(
-                                context.watch<Values>().postId ?? '',
-                                context.watch<Values>().comment);
+                                Provider.of<Values>(context, listen: false)
+                                        .postId ??
+                                    '',
+                                Provider.of<Values>(context, listen: false)
+                                    .comment);
                             controll.clear();
                             setState(() {});
                           },

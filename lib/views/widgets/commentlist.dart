@@ -32,7 +32,8 @@ class _CommentlistState extends State<Commentlist> {
             return ListView.builder(
               itemCount: commdata.length,
               itemBuilder: (context, index) {
-                if (commdata[index].postid == context.watch<Values>().postId) {
+                if (commdata[index].postid ==
+                    Provider.of<Values>(context, listen: false).postId) {
                   return Commentbox(
                       commdata[index].comment,
                       commdata[index].name,

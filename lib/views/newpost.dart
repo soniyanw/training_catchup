@@ -13,7 +13,7 @@ class NewPost extends StatefulWidget {
 }
 
 class _NewPostState extends State<NewPost> {
-  var controll = TextEditingController();
+  TextEditingController controll = TextEditingController();
   Implementation imp = Implementation();
 
   @override
@@ -51,7 +51,8 @@ class _NewPostState extends State<NewPost> {
                             : () {
                                 FocusScope.of(context).unfocus();
                                 imp.postsomething(
-                                    context.watch<Values>().descrip);
+                                    Provider.of<Values>(context, listen: false)
+                                        .descrip);
                                 controll.clear();
                                 Navigator.of(context).pop();
                                 setState(() {});
