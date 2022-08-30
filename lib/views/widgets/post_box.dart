@@ -1,5 +1,7 @@
-import 'package:firebase_proj/comments.dart';
+import 'package:firebase_proj/view_models/changes.dart';
+import 'package:firebase_proj/views/comments.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PostBox extends StatelessWidget {
   final String descrip;
@@ -66,8 +68,9 @@ class PostBox extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => Comments(postid: postid)));
+                context.read<MyModel>().assignPostId(postid);
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => Comments()));
               },
               child: Text(
                 "Comments",

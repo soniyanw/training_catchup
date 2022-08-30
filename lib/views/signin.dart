@@ -1,7 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_proj/apphome.dart';
-import 'package:firebase_proj/signup.dart';
+import 'package:firebase_proj/models/values.dart';
+import 'package:firebase_proj/service/implement_services.dart';
+import 'package:firebase_proj/view_models/changes.dart';
+import 'package:firebase_proj/views/apphome.dart';
+import 'package:firebase_proj/views/signup.dart';
+import 'package:firebase_proj/views/widgets/textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Signin extends StatefulWidget {
   const Signin({Key? key}) : super(key: key);
@@ -11,13 +15,7 @@ class Signin extends StatefulWidget {
 }
 
 class _SigninState extends State<Signin> {
-  String mail = '';
-  String pass = '';
-  void signin() async {
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: mail, password: pass);
-  }
-
+  Implementation imp = Implementation();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,46 +35,27 @@ class _SigninState extends State<Signin> {
                 child: Column(
                   children: [
                     TextFormField(
-                      style: TextStyle(color: Colors.teal),
-                      onChanged: (val) {
-                        mail = val;
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Email",
-                        labelStyle: TextStyle(color: Colors.teal),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.teal)),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.teal)),
-                      ),
-                    ),
+                        style: TextStyle(color: Colors.teal),
+                        onChanged: (val) {
+                          context.read<MyModel>().assignSIMail(val);
+                        },
+                        decoration: decorate('E-mail')),
                     SizedBox(
                       height: 10,
                     ),
                     TextFormField(
-                      style: TextStyle(color: Colors.teal),
-                      onChanged: (val) {
-                        pass = val;
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        labelStyle: TextStyle(color: Colors.teal),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.teal)),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.teal)),
-                      ),
-                    ),
+                        style: TextStyle(color: Colors.teal),
+                        onChanged: (val) {
+                          context.read<MyModel>().assignSIPass(val);
+                        },
+                        decoration: decorate('password')),
                     SizedBox(
                       height: 10,
                     ),
                     MaterialButton(
                       onPressed: () {
-                        signin();
+                        imp.signin(context.watch<Values>().signInMail,
+                            context.watch<Values>().signInPass);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

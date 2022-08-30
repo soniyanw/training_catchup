@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_proj/post_box.dart';
-import 'package:firebase_proj/posts.dart';
+import 'package:firebase_proj/models/posts.dart';
+import 'package:firebase_proj/service/implement_services.dart';
+import 'package:firebase_proj/views/widgets/post_box.dart';
 import 'package:flutter/material.dart';
 
 class Post extends StatefulWidget {
@@ -12,13 +12,12 @@ class Post extends StatefulWidget {
 }
 
 class _PostState extends State<Post> {
+  Implementation imp = Implementation();
+
   @override
   Widget build(BuildContext context) {
-    final currentuser = FirebaseAuth.instance.currentUser?.uid;
-    CollectionReference<Map<String, dynamic>> collection =
-        FirebaseFirestore.instance.collection('posts');
     return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        future: collection.get(),
+        future: imp.collectionPost.get(),
         builder: (_, snapshot) {
           if (snapshot.hasError) return Text('Error = ${snapshot.error}');
 
@@ -37,7 +36,7 @@ class _PostState extends State<Post> {
                     postdata[index].descrip,
                     postdata[index].name,
                     postdata[index].postid,
-                    postdata[index].userid == currentuser,
+                    postdata[index].userid == imp.currentuser,
                     (postdata[index].time),
                     key: ValueKey(postdata[index].postid));
               },

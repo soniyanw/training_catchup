@@ -1,7 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_proj/posts.dart';
+import 'package:firebase_proj/models/values.dart';
+import 'package:firebase_proj/service/implement_services.dart';
+import 'package:firebase_proj/view_models/changes.dart';
+import 'package:firebase_proj/views/widgets/textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NewPost extends StatefulWidget {
   const NewPost({Key? key}) : super(key: key);
@@ -11,24 +13,8 @@ class NewPost extends StatefulWidget {
 }
 
 class _NewPostState extends State<NewPost> {
-  String descrip = '';
   var controll = TextEditingController();
-  void postsomething() async {
-    FocusScope.of(context).unfocus();
-    final uidd = await FirebaseAuth.instance.currentUser!.uid ?? '';
-    final data =
-        await FirebaseFirestore.instance.collection('users').doc(uidd).get();
-
-    final posts = await FirebaseFirestore.instance.collection('posts').doc();
-    Posts newPost = Posts((b) => b
-      ..descrip = descrip
-      ..userid = data['id']
-      ..name = data['name']
-      ..postid = posts.id.toString()
-      ..time = Timestamp.now().toDate().toString());
-    posts.set(newPost.toJson());
-    controll.clear();
-  }
+  Implementation imp = Implementation();
 
   @override
   Widget build(BuildContext context) {
@@ -53,20 +39,9 @@ class _NewPostState extends State<NewPost> {
                         style: TextStyle(color: Colors.teal),
                         controller: controll,
                         onChanged: (val) {
-                          setState(() {
-                            descrip = val;
-                          });
+                          context.read<MyModel>().assignDescrip(val);
                         },
-                        decoration: InputDecoration(
-                          labelText: "Type Something...",
-                          labelStyle: TextStyle(color: Colors.teal),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.teal)),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.teal)),
-                        )),
+                        decoration: decorate("Type Something...")),
                     SizedBox(
                       height: 10,
                     ),
@@ -74,7 +49,10 @@ class _NewPostState extends State<NewPost> {
                         onPressed: controll.text.isEmpty
                             ? null
                             : () {
-                                postsomething();
+                                FocusScope.of(context).unfocus();
+                                imp.postsomething(
+                                    context.watch<Values>().descrip);
+                                controll.clear();
                                 Navigator.of(context).pop();
                                 setState(() {});
                               },
