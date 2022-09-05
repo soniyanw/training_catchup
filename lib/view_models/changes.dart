@@ -1,4 +1,9 @@
+import 'package:built_collection/src/list.dart';
+import 'package:firebase_proj/models/comment.dart';
+import 'package:firebase_proj/models/posts.dart';
 import 'package:firebase_proj/models/values.dart';
+import 'package:firebase_proj/service/implement_services.dart';
+import 'package:firebase_proj/service/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:state_notifier/state_notifier.dart';
@@ -17,28 +22,9 @@ class Changes extends StatelessWidget {
 
 class MyModel extends StateNotifier<Values> with LocatorMixin {
   MyModel() : super(Values());
-  void assignName(String val) {
-    state = state.rebuild((p0) => p0.signUpName = val);
-  }
-
+  AllServices imp = Implementation();
   void assignComment(String val) {
     state = state.rebuild((p0) => p0.comment = val);
-  }
-
-  void assignSUMail(String val) {
-    state = state.rebuild((p0) => p0.signUpMail = val);
-  }
-
-  void assignSUPass(String val) {
-    state = state.rebuild((p0) => p0.signUpPass = val);
-  }
-
-  void assignSIMail(String val) {
-    state = state.rebuild((p0) => p0.signInMail = val);
-  }
-
-  void assignSIPass(String val) {
-    state = state.rebuild((p0) => p0.signInPass = val);
   }
 
   void assignDescrip(String val) {
@@ -47,5 +33,20 @@ class MyModel extends StateNotifier<Values> with LocatorMixin {
 
   void assignPostId(String val) {
     state = state.rebuild((p0) => p0.postId = val);
+  }
+
+  Future<void> assignComments() async {
+    final BuiltList<Comment> a =
+        await imp.getcomments(postid: state.postId ?? '');
+    state = state.rebuild((p0) {
+      p0.comments = a.toBuilder();
+    });
+  }
+
+  Future<void> assignPosts() async {
+    BuiltList<Posts> a = await imp.getposts();
+    state = state.rebuild((p0) {
+      p0.posts = a.toBuilder();
+    });
   }
 }

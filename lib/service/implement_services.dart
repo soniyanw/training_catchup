@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_proj/models/comment.dart';
@@ -17,7 +18,7 @@ class Implementation implements AllServices {
       FirebaseFirestore.instance.collection('comments');
 
   @override
-  void signin(String? mail, String? pass) async {
+  void signin({String? mail, String? pass}) async {
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: mail ?? '', password: pass ?? '');
   }
@@ -28,7 +29,7 @@ class Implementation implements AllServices {
   }
 
   @override
-  void signup(String? name, String? mail, String? pass) async {
+  void signup({String? name, String? mail, String? pass}) async {
     UserCredential userc;
     userc = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: mail ?? '', password: pass ?? '');
@@ -71,5 +72,37 @@ class Implementation implements AllServices {
       ..time = Timestamp.now().toDate().toString()
       ..id = comms.id.toString());
     comms.set(newComment.toJson());
+  }
+
+  @override
+  Future<BuiltList<Comment>> getcomments({required String postid}) async {
+    final QuerySnapshot<Map<String, dynamic>> _collectionRef =
+        await collectionComment.where("postid", isEqualTo: postid).get();
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> snapshot =
+        _collectionRef.docs;
+    List<Comment> commdata = [];
+
+    snapshot.forEach((element) {
+      commdata.add(Comment.fromJson(element.data()));
+    });
+    print("comments");
+    print(commdata);
+    return commdata.toBuiltList();
+  }
+
+  @override
+  Future<BuiltList<Posts>> getposts() async {
+    final QuerySnapshot<Map<String, dynamic>> _collectionRef =
+        await collectionPost.get();
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> snapshot =
+        _collectionRef.docs;
+    final List<Posts> postdata = [];
+
+    snapshot.forEach((element) {
+      postdata.add(Posts.fromJson(element.data()));
+    });
+    print("posts");
+    print(postdata);
+    return postdata.toBuiltList();
   }
 }

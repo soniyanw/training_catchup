@@ -16,6 +16,8 @@ class Signin extends StatefulWidget {
 
 class _SigninState extends State<Signin> {
   Implementation imp = Implementation();
+  String sMail='';
+  String sPass='';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +39,7 @@ class _SigninState extends State<Signin> {
                     TextFormField(
                         style: TextStyle(color: Colors.teal),
                         onChanged: (val) {
-                          context.read<MyModel>().assignSIMail(val);
+                          sMail=val;
                         },
                         decoration: decorate('E-mail')),
                     SizedBox(
@@ -46,7 +48,7 @@ class _SigninState extends State<Signin> {
                     TextFormField(
                         style: TextStyle(color: Colors.teal),
                         onChanged: (val) {
-                          context.read<MyModel>().assignSIPass(val);
+                          sPass=val;
                         },
                         decoration: decorate('password')),
                     SizedBox(
@@ -55,10 +57,8 @@ class _SigninState extends State<Signin> {
                     MaterialButton(
                       onPressed: () {
                         imp.signin(
-                            Provider.of<Values>(context, listen: false)
-                                .signInMail,
-                            Provider.of<Values>(context, listen: false)
-                                .signInPass);
+                           mail: sMail,
+                            pass:sPass);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

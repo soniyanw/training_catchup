@@ -51,8 +51,7 @@ class _NewPostState extends State<NewPost> {
                             : () {
                                 FocusScope.of(context).unfocus();
                                 imp.postsomething(
-                                    Provider.of<Values>(context, listen: false)
-                                        .descrip);
+                                    context.read<MyModel>().state.descrip);
                                 controll.clear();
                                 Navigator.of(context).pop();
                                 setState(() {});

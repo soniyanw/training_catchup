@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:firebase_proj/models/serializers.dart';
@@ -20,10 +21,7 @@ abstract class Values implements Built<Values, ValuesBuilder> {
   static Serializer<Values> get serializer => _$valuesSerializer;
   String? get comment;
   String? get descrip;
-  String? get signInMail;
-  String? get signUpMail;
-  String? get signInPass;
-  String? get signUpPass;
-  String? get signUpName;
   String? get postId;
+  BuiltList<dynamic>? get comments;
+  BuiltList<dynamic>? get posts;
 }

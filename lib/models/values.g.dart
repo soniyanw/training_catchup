@@ -33,47 +33,28 @@ class _$ValuesSerializer implements StructuredSerializer<Values> {
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    value = object.signInMail;
-    if (value != null) {
-      result
-        ..add('signInMail')
-        ..add(serializers.serialize(value,
-            specifiedType: const FullType(String)));
-    }
-    value = object.signUpMail;
-    if (value != null) {
-      result
-        ..add('signUpMail')
-        ..add(serializers.serialize(value,
-            specifiedType: const FullType(String)));
-    }
-    value = object.signInPass;
-    if (value != null) {
-      result
-        ..add('signInPass')
-        ..add(serializers.serialize(value,
-            specifiedType: const FullType(String)));
-    }
-    value = object.signUpPass;
-    if (value != null) {
-      result
-        ..add('signUpPass')
-        ..add(serializers.serialize(value,
-            specifiedType: const FullType(String)));
-    }
-    value = object.signUpName;
-    if (value != null) {
-      result
-        ..add('signUpName')
-        ..add(serializers.serialize(value,
-            specifiedType: const FullType(String)));
-    }
     value = object.postId;
     if (value != null) {
       result
         ..add('postId')
         ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
+    }
+    value = object.comments;
+    if (value != null) {
+      result
+        ..add('comments')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(dynamic)])));
+    }
+    value = object.posts;
+    if (value != null) {
+      result
+        ..add('posts')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(dynamic)])));
     }
     return result;
   }
@@ -97,29 +78,21 @@ class _$ValuesSerializer implements StructuredSerializer<Values> {
           result.descrip = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
           break;
-        case 'signInMail':
-          result.signInMail = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String?;
-          break;
-        case 'signUpMail':
-          result.signUpMail = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String?;
-          break;
-        case 'signInPass':
-          result.signInPass = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String?;
-          break;
-        case 'signUpPass':
-          result.signUpPass = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String?;
-          break;
-        case 'signUpName':
-          result.signUpName = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String?;
-          break;
         case 'postId':
           result.postId = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String?;
+          break;
+        case 'comments':
+          result.comments.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(dynamic)]))!
+              as BuiltList<Object?>);
+          break;
+        case 'posts':
+          result.posts.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(dynamic)]))!
+              as BuiltList<Object?>);
           break;
       }
     }
@@ -134,30 +107,17 @@ class _$Values extends Values {
   @override
   final String? descrip;
   @override
-  final String? signInMail;
-  @override
-  final String? signUpMail;
-  @override
-  final String? signInPass;
-  @override
-  final String? signUpPass;
-  @override
-  final String? signUpName;
-  @override
   final String? postId;
+  @override
+  final BuiltList<dynamic>? comments;
+  @override
+  final BuiltList<dynamic>? posts;
 
   factory _$Values([void Function(ValuesBuilder)? updates]) =>
       (new ValuesBuilder()..update(updates))._build();
 
   _$Values._(
-      {this.comment,
-      this.descrip,
-      this.signInMail,
-      this.signUpMail,
-      this.signInPass,
-      this.signUpPass,
-      this.signUpName,
-      this.postId})
+      {this.comment, this.descrip, this.postId, this.comments, this.posts})
       : super._();
 
   @override
@@ -173,28 +133,19 @@ class _$Values extends Values {
     return other is Values &&
         comment == other.comment &&
         descrip == other.descrip &&
-        signInMail == other.signInMail &&
-        signUpMail == other.signUpMail &&
-        signInPass == other.signInPass &&
-        signUpPass == other.signUpPass &&
-        signUpName == other.signUpName &&
-        postId == other.postId;
+        postId == other.postId &&
+        comments == other.comments &&
+        posts == other.posts;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
         $jc(
-            $jc(
-                $jc(
-                    $jc(
-                        $jc($jc($jc(0, comment.hashCode), descrip.hashCode),
-                            signInMail.hashCode),
-                        signUpMail.hashCode),
-                    signInPass.hashCode),
-                signUpPass.hashCode),
-            signUpName.hashCode),
-        postId.hashCode));
+            $jc($jc($jc(0, comment.hashCode), descrip.hashCode),
+                postId.hashCode),
+            comments.hashCode),
+        posts.hashCode));
   }
 
   @override
@@ -202,12 +153,9 @@ class _$Values extends Values {
     return (newBuiltValueToStringHelper(r'Values')
           ..add('comment', comment)
           ..add('descrip', descrip)
-          ..add('signInMail', signInMail)
-          ..add('signUpMail', signUpMail)
-          ..add('signInPass', signInPass)
-          ..add('signUpPass', signUpPass)
-          ..add('signUpName', signUpName)
-          ..add('postId', postId))
+          ..add('postId', postId)
+          ..add('comments', comments)
+          ..add('posts', posts))
         .toString();
   }
 }
@@ -223,29 +171,19 @@ class ValuesBuilder implements Builder<Values, ValuesBuilder> {
   String? get descrip => _$this._descrip;
   set descrip(String? descrip) => _$this._descrip = descrip;
 
-  String? _signInMail;
-  String? get signInMail => _$this._signInMail;
-  set signInMail(String? signInMail) => _$this._signInMail = signInMail;
-
-  String? _signUpMail;
-  String? get signUpMail => _$this._signUpMail;
-  set signUpMail(String? signUpMail) => _$this._signUpMail = signUpMail;
-
-  String? _signInPass;
-  String? get signInPass => _$this._signInPass;
-  set signInPass(String? signInPass) => _$this._signInPass = signInPass;
-
-  String? _signUpPass;
-  String? get signUpPass => _$this._signUpPass;
-  set signUpPass(String? signUpPass) => _$this._signUpPass = signUpPass;
-
-  String? _signUpName;
-  String? get signUpName => _$this._signUpName;
-  set signUpName(String? signUpName) => _$this._signUpName = signUpName;
-
   String? _postId;
   String? get postId => _$this._postId;
   set postId(String? postId) => _$this._postId = postId;
+
+  ListBuilder<dynamic>? _comments;
+  ListBuilder<dynamic> get comments =>
+      _$this._comments ??= new ListBuilder<dynamic>();
+  set comments(ListBuilder<dynamic>? comments) => _$this._comments = comments;
+
+  ListBuilder<dynamic>? _posts;
+  ListBuilder<dynamic> get posts =>
+      _$this._posts ??= new ListBuilder<dynamic>();
+  set posts(ListBuilder<dynamic>? posts) => _$this._posts = posts;
 
   ValuesBuilder();
 
@@ -254,12 +192,9 @@ class ValuesBuilder implements Builder<Values, ValuesBuilder> {
     if ($v != null) {
       _comment = $v.comment;
       _descrip = $v.descrip;
-      _signInMail = $v.signInMail;
-      _signUpMail = $v.signUpMail;
-      _signInPass = $v.signInPass;
-      _signUpPass = $v.signUpPass;
-      _signUpName = $v.signUpName;
       _postId = $v.postId;
+      _comments = $v.comments?.toBuilder();
+      _posts = $v.posts?.toBuilder();
       _$v = null;
     }
     return this;
@@ -280,16 +215,28 @@ class ValuesBuilder implements Builder<Values, ValuesBuilder> {
   Values build() => _build();
 
   _$Values _build() {
-    final _$result = _$v ??
-        new _$Values._(
-            comment: comment,
-            descrip: descrip,
-            signInMail: signInMail,
-            signUpMail: signUpMail,
-            signInPass: signInPass,
-            signUpPass: signUpPass,
-            signUpName: signUpName,
-            postId: postId);
+    _$Values _$result;
+    try {
+      _$result = _$v ??
+          new _$Values._(
+              comment: comment,
+              descrip: descrip,
+              postId: postId,
+              comments: _comments?.build(),
+              posts: _posts?.build());
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'comments';
+        _comments?.build();
+        _$failedField = 'posts';
+        _posts?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            r'Values', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

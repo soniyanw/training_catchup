@@ -16,6 +16,9 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   Implementation imp = Implementation();
+  String sName='';
+  String sMail="";
+  String sPass='';
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,8 @@ class _SignupState extends State<Signup> {
                     TextField(
                         style: TextStyle(color: Colors.teal),
                         onChanged: (val) {
-                          context.read<MyModel>().assignSUMail(val);
+                          sMail=val;
+                          //context.read<MyModel>().assignSUMail(val);
                         },
                         decoration: decorate('E-mail')),
                     SizedBox(
@@ -47,7 +51,8 @@ class _SignupState extends State<Signup> {
                     TextField(
                         style: TextStyle(color: Colors.teal),
                         onChanged: (val) {
-                          context.read<MyModel>().assignSUPass(val);
+                          sPass=val;
+                         // context.read<MyModel>().assignSUPass(val);
                         },
                         decoration: decorate('Password')),
                     SizedBox(
@@ -56,7 +61,8 @@ class _SignupState extends State<Signup> {
                     TextField(
                         style: TextStyle(color: Colors.teal),
                         onChanged: (val) {
-                          context.read<MyModel>().assignName(val);
+                          sName=val;
+                          //context.read<MyModel>().assignName(val);
                         },
                         decoration: decorate('Name')),
                     SizedBox(
@@ -65,12 +71,7 @@ class _SignupState extends State<Signup> {
                     MaterialButton(
                       onPressed: () {
                         imp.signup(
-                            Provider.of<Values>(context, listen: false)
-                                .signUpName,
-                            Provider.of<Values>(context, listen: false)
-                                .signUpMail,
-                            Provider.of<Values>(context, listen: false)
-                                .signUpPass);
+                           name:sName,mail:sMail,pass:sPass);
                         setState(() {});
                         Navigator.push(
                           context,

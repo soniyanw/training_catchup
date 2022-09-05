@@ -1,4 +1,3 @@
-import 'package:firebase_proj/models/values.dart';
 import 'package:firebase_proj/service/implement_services.dart';
 import 'package:firebase_proj/view_models/changes.dart';
 import 'package:firebase_proj/views/widgets/commentlist.dart';
@@ -47,11 +46,8 @@ class _CommentsState extends State<Comments> {
                         : () {
                             FocusScope.of(context).unfocus();
                             imp.commentsomething(
-                                Provider.of<Values>(context, listen: false)
-                                        .postId ??
-                                    '',
-                                Provider.of<Values>(context, listen: false)
-                                    .comment);
+                                context.read<MyModel>().state.postId ?? '',
+                                context.read<MyModel>().state.comment);
                             controll.clear();
                             setState(() {});
                           },

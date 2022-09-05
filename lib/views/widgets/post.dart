@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_proj/models/posts.dart';
+import 'package:built_collection/src/list.dart';
 import 'package:firebase_proj/service/implement_services.dart';
+import 'package:firebase_proj/view_models/changes.dart';
 import 'package:firebase_proj/views/widgets/post_box.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Post extends StatefulWidget {
   const Post({Key? key}) : super(key: key);
@@ -13,37 +14,34 @@ class Post extends StatefulWidget {
 
 class _PostState extends State<Post> {
   Implementation imp = Implementation();
+  Future<void> method() async {
+    await context.read<MyModel>().assignPosts();
+  }
+
+  @override
+  void initState() {
+    method();
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        future: imp.collectionPost.get(),
-        builder: (_, snapshot) {
-          if (snapshot.hasError) return Text('Error = ${snapshot.error}');
-
-          if (snapshot.hasData) {
-            final List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
-                snapshot.data!.docs;
-            final postdata = [];
-
-            data.forEach((element) {
-              postdata.add(Posts.fromJson(element.data()));
-            });
-            return ListView.builder(
-              itemCount: postdata.length,
-              itemBuilder: (context, index) {
-                return PostBox(
-                    postdata[index].descrip,
-                    postdata[index].name,
-                    postdata[index].postid,
-                    postdata[index].userid == imp.currentuser,
-                    (postdata[index].time),
-                    key: ValueKey(postdata[index].postid));
-              },
-            );
-          } else {
-            return Container(color: Colors.teal[100]);
-          }
-        });
+    BuiltList? postdata = context.read<MyModel>().state.posts;
+    if (postdata == null) {
+      return CircularProgressIndicator();
+    }
+    return ListView.builder(
+      itemCount: postdata.length,
+      itemBuilder: (context, index) {
+        return PostBox(
+            postdata[index].descrip,
+            postdata[index].name,
+            postdata[index].postid,
+            postdata[index].userid == imp.currentuser,
+            (postdata[index].time),
+            key: ValueKey(postdata[index].postid));
+      },
+    );
   }
 }
