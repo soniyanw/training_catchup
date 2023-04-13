@@ -1,4 +1,3 @@
-import 'package:firebase_proj/models/values.dart';
 import 'package:firebase_proj/service/implement_services.dart';
 import 'package:firebase_proj/view_models/changes.dart';
 import 'package:firebase_proj/views/widgets/textfield.dart';
@@ -45,7 +44,7 @@ class _NewPostState extends State<NewPost> {
                     SizedBox(
                       height: 10,
                     ),
-                    RaisedButton(
+                    MaterialButton(
                         onPressed: controll.text.isEmpty
                             ? null
                             : () {

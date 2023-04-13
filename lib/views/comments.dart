@@ -44,7 +44,6 @@ class _CommentsState extends State<Comments> {
                     onPressed: controll.text.isEmpty
                         ? null
                         : () {
-                            FocusScope.of(context).unfocus();
                             imp.commentsomething(
                                 context.read<MyModel>().state.postId ?? '',
                                 context.read<MyModel>().state.comment);
